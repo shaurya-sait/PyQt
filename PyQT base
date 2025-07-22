@@ -15,7 +15,7 @@ class SafeSyncApp(QWidget):
     """
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("SafeSync – Backup Scheduler")  # Window title
+        self.setWindowTitle("SafeSync – Backup Tool & Scheduler")  # Window title
         self.resize(900, 700)  # Set initial window size
         self.init_ui()  # Build the interface
 
