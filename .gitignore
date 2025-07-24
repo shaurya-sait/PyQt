@@ -1,0 +1,46 @@
+ECHO is on.
+
+# ========================
+# SafeSync Project .gitignore
+# ========================
+
+# Python cache
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Ansible
+*.retry
+*.log
+*.yml~
+*.bak
+
+# Terraform
+*.tfstate
+*.tfstate.*
+.terraform/
+terraform.tfvars
+
+# Node / Electron (if GUI uses it)
+node_modules/
+dist/
+build/
+
+# Inno Setup build files
+*.iss~
+*.exe
+Output/
+build/
+
+# Environment / Credentials
+.env
+aws.yml
+
+# System files
+.DS_Store
+Thumbs.db
+
+# IDEs
+.vscode/
+.idea/
+*.code-workspace
