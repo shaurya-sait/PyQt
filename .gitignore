@@ -40,3 +40,6 @@ Thumbs.db
 # Credentials
 aws.yml
 terraform_output.json
+
+# Ignore sensitive Terraform outputs
+terraform/terraform_outputs.json
