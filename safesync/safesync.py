@@ -1,5 +1,6 @@
 # SafeSync
 # A PyQt5 application to manage folder backups to AWS S3, scheduling via Windows Task Scheduler
+
 from PyQt5.QtWidgets import (
     QApplication, QWidget, QLabel, QLineEdit, QPushButton, QTextEdit,
     QVBoxLayout, QHBoxLayout, QFileDialog, QCheckBox, QComboBox, QListWidget,
@@ -8,8 +9,11 @@ from PyQt5.QtWidgets import (
 import sys, os, subprocess
 from datetime import datetime
 from dotenv import load_dotenv
+from pathlib import Path 
 
-load_dotenv()
+# Load environment variables from .env in the script's directory
+dotenv_path = Path(__file__).resolve().parent / ".env"
+load_dotenv(dotenv_path=dotenv_path)
 
 class SafeSyncApp(QWidget):
     def __init__(self):
@@ -113,10 +117,13 @@ class SafeSyncApp(QWidget):
         tools_layout = QHBoxLayout()
         test_btn = QPushButton("Test AWS Credentials")
         help_btn = QPushButton("AWS Setup Help")
+        reload_btn = QPushButton("🔄 Reload .env")
         test_btn.clicked.connect(self.test_aws_credentials)
         help_btn.clicked.connect(self.show_aws_help)
+        reload_btn.clicked.connect(self.load_env_into_fields)
         tools_layout.addWidget(test_btn)
         tools_layout.addWidget(help_btn)
+        tools_layout.addWidget(reload_btn)
         tools_group.setLayout(tools_layout)
 
         layout.addWidget(folder_group)
@@ -129,19 +136,23 @@ class SafeSyncApp(QWidget):
 
         self.update_script_list()
         self.update_task_list()
+        self.load_env_into_fields()  # Load environment values after UI is ready
 
-        # Load AWS credentials and bucket from environment
-        bucket = os.getenv("S3_BUCKET")
-        if bucket:
-            self.bucket_input.setText(bucket)
+    def load_env_into_fields(self):
+        dotenv_path = Path(__file__).resolve().parent / ".env"
 
-        aws_key = os.getenv("AWS_ACCESS_KEY_ID")
-        if aws_key:
-            self.aws_access_input.setText(aws_key)
+    # Clear previous values from environment memory
+        for key in ["AWS_ACCESS_KEY_ID", "AWS_SECRET_ACCESS_KEY", "BUCKET_NAME"]:
+            os.environ.pop(key, None)
 
-        aws_secret = os.getenv("AWS_SECRET_ACCESS_KEY")
-        if aws_secret:
-            self.aws_secret_input.setText(aws_secret)
+    # Load from file only if it exists
+        if dotenv_path.exists():
+            load_dotenv(dotenv_path=dotenv_path, override=True)
+
+        self.bucket_input.setText(os.getenv("BUCKET_NAME", ""))
+        self.aws_access_input.setText(os.getenv("AWS_ACCESS_KEY_ID", ""))
+        self.aws_secret_input.setText(os.getenv("AWS_SECRET_ACCESS_KEY", ""))
+
 
     def browse_folder(self):
         """

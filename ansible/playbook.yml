@@ -1,0 +1,60 @@
+- name: Setup SafeSync on Windows
+  hosts: localwin
+  vars_files:
+    - vars/aws.yml
+
+  vars:
+    safesync_dir: "C:\\SafeSync"
+    script_dir: "C:\\SafeSync\\scripts"
+    env_path: "C:\\SafeSync\\.env"
+    bat_script_name: "safesync_upload.bat"
+    bat_script_source: "files/safesync_upload.bat"
+
+  tasks:
+    - name: Ensure SafeSync directories exist
+      win_file:
+        path: "{{ item }}"
+        state: directory
+      loop:
+        - "{{ safesync_dir }}"
+        - "{{ script_dir }}"
+
+    - name: Install AWS CLI via Chocolatey
+      win_chocolatey:
+        name: awscli
+        state: present
+
+    - name: Set AWS Access Key ID as system environment variable
+      win_environment:
+        name: AWS_ACCESS_KEY_ID
+        value: "{{ aws_access_key_id }}"
+        level: machine
+        state: present
+
+    - name: Set AWS Secret Access Key as system environment variable
+      win_environment:
+        name: AWS_SECRET_ACCESS_KEY
+        value: "{{ aws_secret_access_key }}"
+        level: machine
+        state: present
+
+    - name: Create .env file for SafeSync GUI
+      win_copy:
+        dest: "{{ env_path }}"
+        content: |
+          AWS_ACCESS_KEY_ID={{ aws_access_key_id }}
+          AWS_SECRET_ACCESS_KEY={{ aws_secret_access_key }}
+          S3_BUCKET={{ s3_bucket }}
+
+    - name: Schedule backup task
+      win_scheduled_task:
+        name: "SafeSyncBackup"
+        description: "Daily SafeSync S3 Backup"
+        actions:
+          - path: "cmd.exe"
+            arguments: "/c {{ script_dir }}\\{{ bat_script_name }}"
+        triggers:
+          - type: daily
+            start_boundary: "09:00:00"
+        username: "SYSTEM"
+        state: present

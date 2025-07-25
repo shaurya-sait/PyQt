@@ -1,46 +1,42 @@
-ECHO is on.
-
-# ========================
-# SafeSync Project .gitignore
-# ========================
-
-# Python cache
+# Python
 __pycache__/
-*.py[cod]
+*.pyc
 *.pyo
+*.pyd
 
-# Ansible
-*.retry
+# Environment
+.env
+*.env
+
+# VSCode
+.vscode/
+*.code-workspace
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# Logs and outputs
 *.log
-*.yml~
 *.bak
+*.tmp
+*.swp
+
+# Compiled files or installers
+*.exe
+*.msi
+*.zip
 
 # Terraform
 *.tfstate
 *.tfstate.*
 .terraform/
-terraform.tfvars
 
-# Node / Electron (if GUI uses it)
-node_modules/
-dist/
-build/
+# Ansible cache
+*.retry
+*.log
+*.facts
 
-# Inno Setup build files
-*.iss~
-*.exe
-Output/
-build/
-
-# Environment / Credentials
-.env
+# Credentials
 aws.yml
-
-# System files
-.DS_Store
-Thumbs.db
-
-# IDEs
-.vscode/
-.idea/
-*.code-workspace
+terraform_output.json
